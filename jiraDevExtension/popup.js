@@ -10,8 +10,13 @@ document.addEventListener('DOMContentLoaded', function() {
         bkg.console.log('Active url: ' + url);
 
         if (isValidJiraIssueUrl(url)) {
-            getIssueContent(url, function(content) {
-                showMessage('Task: ' + content.fields.summary);
+            getIssueContent(getIssueId(url), function(content) {
+                if (isValidDevTask(content)) {
+                    showForm()
+                } else {
+                    showMessage('Эта таска не похожа на правильную Dev Jira задачу');
+                }
+
             }, function(errorMessage) {
                 showMessage('Cannot load data: ' + errorMessage);
             })
@@ -35,7 +40,8 @@ function getCurrentTabUrl(callback) {
 }
 
 function getIssueContent(issueId, callback, errorCallback) {
-    var requestUrl = 'https://sentinel2.luxoft.com/sen/issues/rest/api/2/issue/993619';
+    var requestUrl = 'https://sentinel2.luxoft.com/sen/issues/rest/api/2/issue/' + issueId;
+    bkg.console.log("requestUrl: " + requestUrl);
     var x = new XMLHttpRequest();
     x.open('GET', requestUrl);
     x.responseType = 'json';
@@ -59,6 +65,14 @@ function getIssueContent(issueId, callback, errorCallback) {
 
 function isValidJiraIssueUrl(url) {
     return url.indexOf(JIRA_SERVER) > 0;
+}
+
+function isValidDevTask(json) {
+    return json.fields.issuetype.name == 'Task' && json.fields.summary.indexOf('DEV') > 0;
+}
+
+function getIssueId(url) {
+    return url.substring(url.lastIndexOf('/') + 1);
 }
 
 function switchElement(id, show) {
