@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+
+  "name": "Jira Dev Helper",
+  "description": "Помогает решать ежедневные задачи в проекте ММЦ",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "jira.png",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "page": "background.html"
+  },
+  "permissions": [
+    "activeTab",
+    "https://sentinel2.luxoft.com/",
+    "https://ajax.googleapis.com/"
+  ]
+}

@@ -1,0 +1,18 @@
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Maven
+logs/
+target/
+
+# MMC
+*.epoch
+*.lck
+*.log
+
+.DS_Store
+mvnw.cmd
+mvnw
+.mvn/
