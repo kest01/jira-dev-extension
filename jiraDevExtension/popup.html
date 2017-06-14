@@ -4,6 +4,7 @@
     <title>Jira Dev Helper</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="popup.css">
+    <script src="jiraClient.js"></script>
     <script src="popup.js"></script>
 </head>
 <body class="fixed-area">
@@ -16,10 +17,17 @@
             <br/>
             <label>
                 Link to upsource review:<br/>
-                <input type="text"/>
+                <input id="reviewDescription" type="text"/>
+            </label>
+            <label>
+                Review manager:<br/>
+                <select id="reviewer">
+                    <option value="kkharitonov" selected>Konstantin Kharitonov</option>
+                    <option value="aakondratov">Aleksandr Kondratov</option>
+                </select>
             </label>
             <br/><br/>
-            <button>Create</button>
+            <a id="createButton">Create</a>
         </form>
     </div>
 </body>

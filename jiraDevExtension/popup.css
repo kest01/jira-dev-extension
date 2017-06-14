@@ -28,3 +28,18 @@ body {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+a {
+    color: blue;
+    cursor:pointer;
+    text-decoration:underline;
+}
+a:link {
+    color: blue;
+}
+a:visited {
+    color: blue;
+}
+a:active {
+    color: blue;
+}

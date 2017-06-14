@@ -1,30 +1,74 @@
+"use strict";
 
 const JIRA_SERVER = 'sentinel2.luxoft.com/sen/issues/browse';
 
 var bkg = chrome.extension.getBackgroundPage();
 bkg.console.log('Staring Jira Dev Helper');
 
+var jiraClient = new JiraClient();
+
+var parentIssueContent = null;
+var reviewIssueContent = null;
+
 document.addEventListener('DOMContentLoaded', function() {
+    parentIssueContent = null;
+    reviewIssueContent = null;
 
     getCurrentTabUrl(function(url) {
         bkg.console.log('Active url: ' + url);
 
+        var button = document.getElementById('createButton');
+        button.addEventListener('click', onCreateButtonClick);
+
         if (isValidJiraIssueUrl(url)) {
-            getIssueContent(getIssueId(url), function(content) {
+            jiraClient.getIssueData(getIssueId(url), function(content) {
                 if (isValidDevTask(content)) {
-                    showForm()
+                    parentIssueContent = content;
+                    showForm();
                 } else {
                     showMessage('Эта таска не похожа на правильную Dev Jira задачу');
                 }
 
             }, function(errorMessage) {
                 showMessage('Cannot load data: ' + errorMessage);
-            })
+            });
+
         } else {
             showMessage("Extension works only on jira issue page!");
         }
     });
 });
+
+function onCreateButtonClick() {
+    // bkg.console.log('on button click');
+    var reviewDescription = document.getElementById('reviewDescription').value;
+    var reviewer = document.getElementById('reviewer').value;
+
+    if (!parentIssueContent) {
+        alert("Не найдены данные родительской задачи");
+        return;
+    }
+    if (!reviewDescription) {
+        alert("Не заполнено поле со ссылкой на Upsource review");
+        return;
+    }
+    showLoader();
+    jiraClient.createReviewIssue(parentIssueContent, reviewDescription, reviewer, function(content) {
+        reviewIssueContent = content;
+
+        jiraClient.linkIssues(parentIssueContent.key, reviewIssueContent.key, function() {
+
+            showMessage('Задача на ревью создана: <a href="' + jiraClient.baseWebUrl + reviewIssueContent.key + '">'
+                + reviewIssueContent.key+ '</a>');
+
+        }, function(errorMessage) {
+            showMessage('Cannot load data: ' + errorMessage);
+        });
+    }, function(errorMessage) {
+        showMessage('Cannot load data: ' + errorMessage);
+    })
+}
+
 
 function getCurrentTabUrl(callback) {
     var queryInfo = {
@@ -39,36 +83,12 @@ function getCurrentTabUrl(callback) {
     });
 }
 
-function getIssueContent(issueId, callback, errorCallback) {
-    var requestUrl = 'https://sentinel2.luxoft.com/sen/issues/rest/api/2/issue/' + issueId;
-    bkg.console.log("requestUrl: " + requestUrl);
-    var x = new XMLHttpRequest();
-    x.open('GET', requestUrl);
-    x.responseType = 'json';
-    x.onload = function() {
-        // Parse and process the response from Google Image Search.
-        var response = x.response;
-        bkg.console.log(response);
-
-        if (!response) {
-            errorCallback('No response from Jira server!');
-            return;
-        }
-        callback(response);
-    };
-    x.onerror = function() {
-        errorCallback('Network error.');
-    };
-    x.send();
-}
-
-
 function isValidJiraIssueUrl(url) {
     return url.indexOf(JIRA_SERVER) > 0;
 }
 
 function isValidDevTask(json) {
-    return json.fields.issuetype.name == 'Task' && json.fields.summary.indexOf('DEV') > 0;
+    return json.fields.issuetype.name === 'Task' && json.fields.summary.indexOf('DEV') > 0;
 }
 
 function getIssueId(url) {
@@ -79,6 +99,11 @@ function switchElement(id, show) {
     document.getElementById(id).style.display = show ? 'block' : 'none';
 }
 
+function showLoader() {
+    switchElement('loader', true);
+    switchElement('message', false);
+    switchElement('createForm', false);
+}
 function showForm() {
     switchElement('loader', false);
     switchElement('message', false);
@@ -88,5 +113,5 @@ function showMessage(message) {
     switchElement('loader', false);
     switchElement('createForm', false);
     switchElement('message', true);
-    document.getElementById('message').textContent = message;
+    document.getElementById('message').innerHTML = message;
 }
