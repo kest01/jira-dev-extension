@@ -87,13 +87,18 @@ function getImageUrl(searchTerm, callback, errorCallback) {
 function renderStatus(statusText) {
     document.getElementById('status').textContent = statusText;
 }
+
+function hideLoader() {
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('createForm').style.display = 'block';
+}
 var bkg = chrome.extension.getBackgroundPage();
 bkg.console.log('Staring Jira Dev Helper');
 
 document.addEventListener('DOMContentLoaded', function() {
     bkg.console.log('DOM Loaded');
 
-    document.getElementById('createForm').style.display = 'block';
+    hideLoader();
 
     getCurrentTabUrl(function(url) {
         // Put the image URL in Google search.
