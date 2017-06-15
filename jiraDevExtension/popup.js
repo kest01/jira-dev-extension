@@ -1,7 +1,5 @@
 "use strict";
 
-const JIRA_SERVER = 'sentinel2.luxoft.com/sen/issues/browse';
-
 var bkg = chrome.extension.getBackgroundPage();
 bkg.console.log('Staring Jira Dev Helper');
 
@@ -34,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
         } else {
-            showMessage("Extension works only on jira issue page!");
+            showMessage("Плагин работает только на страницах с Jira задачами");
         }
     });
 });
@@ -84,11 +82,13 @@ function getCurrentTabUrl(callback) {
 }
 
 function isValidJiraIssueUrl(url) {
-    return url.indexOf(JIRA_SERVER) > 0;
+    return url.indexOf(jiraClient.baseWebUrl) > 0;
 }
 
 function isValidDevTask(json) {
-    return json.fields.issuetype.name === 'Task' && json.fields.summary.indexOf('DEV') > 0;
+    return json.fields.issuetype.name === 'Task'
+        && json.fields.summary.indexOf('DEV') > -1
+        && json.fields.summary.indexOf('[CRR]') === -1
 }
 
 function getIssueId(url) {

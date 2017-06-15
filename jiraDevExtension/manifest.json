@@ -5,15 +5,17 @@
   "description": "Помогает решать ежедневные задачи в проекте ММЦ",
   "version": "1.0",
 
-  "browser_action": {
+  "page_action": {
     "default_icon": "jira.png",
     "default_popup": "popup.html"
   },
   "background": {
-    "page": "background.html"
+    "scripts": ["background.js"],
+    "persistent": false
   },
   "permissions": [
     "activeTab",
+    "declarativeContent",
     "https://sentinel2.luxoft.com/",
     "https://ajax.googleapis.com/"
   ]
