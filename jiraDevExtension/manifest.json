@@ -16,6 +16,7 @@
   "permissions": [
     "activeTab",
     "declarativeContent",
+    "storage",
     "https://sentinel2.luxoft.com/",
     "https://ajax.googleapis.com/"
   ]

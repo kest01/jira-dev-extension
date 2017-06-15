@@ -11,6 +11,9 @@ var reviewIssueContent = null;
 document.addEventListener('DOMContentLoaded', function() {
     parentIssueContent = null;
     reviewIssueContent = null;
+    readSettings(function (reviewer) {
+        document.getElementById('reviewer').value = reviewer;
+    });
 
     getCurrentTabUrl(function(url) {
         bkg.console.log('Active url: ' + url);
@@ -58,7 +61,7 @@ function onCreateButtonClick() {
 
             showMessage('Задача на ревью создана: <a href="' + jiraClient.baseWebUrl + reviewIssueContent.key + '">'
                 + reviewIssueContent.key+ '</a>');
-
+            saveSettings(reviewer);
         }, function(errorMessage) {
             showMessage('Cannot load data: ' + errorMessage);
         });
@@ -67,22 +70,8 @@ function onCreateButtonClick() {
     })
 }
 
-
-function getCurrentTabUrl(callback) {
-    var queryInfo = {
-        active: true,
-        currentWindow: true
-    };
-
-    chrome.tabs.query(queryInfo, function(tabs) {
-        var tab = tabs[0];
-        var url = tab.url;
-        callback(url);
-    });
-}
-
 function isValidJiraIssueUrl(url) {
-    return url.indexOf(jiraClient.baseWebUrl) > 0;
+    return url.indexOf(jiraClient.baseWebUrl) > -1;
 }
 
 function isValidDevTask(json) {
