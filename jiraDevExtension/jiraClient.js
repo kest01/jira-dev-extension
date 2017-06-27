@@ -39,7 +39,7 @@ JiraClient.prototype.linkIssues =  function (parentIssueKey, reviewIssueKey, cal
             "key": parentIssueKey
         },
         "comment": {
-            "body": "Issue create by Jira Dev Helper"
+            "body": "Issue created by Jira Dev Helper"
         }
     };
     bkg.console.log(request);
