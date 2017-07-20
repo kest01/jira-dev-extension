@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     parentIssueContent = content;
                     showForm();
                 } else {
-                    showMessage('Эта таска не похожа на правильную Dev Jira задачу');
+                    showMessage('Эта таска не похожа на Dev задачу (в summary нет DEV, SRV или UI)');
                 }
 
             }, function(errorMessage) {
@@ -76,7 +76,7 @@ function isValidJiraIssueUrl(url) {
 
 function isValidDevTask(json) {
     return json.fields.issuetype.name === 'Task'
-        && json.fields.summary.indexOf('DEV') > -1
+        && (json.fields.summary.indexOf('DEV') > -1 || json.fields.summary.indexOf('SRV') > -1 || json.fields.summary.indexOf('UI') > -1)
         && json.fields.summary.indexOf('[CRR]') === -1
 }
 
